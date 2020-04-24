@@ -1,9 +1,6 @@
 import os.path
 from cryptography.fernet import Fernet
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import base64
+
 import os
 
 
@@ -11,13 +8,8 @@ import os
 file = open('key.key', 'rb')
 key = file.read()
 file.close()
+
 # print(key)
-
-
-# print(hashlib.algorithms_available)
-# tr = hashlib.md5(b'Hello World')
-# final = tr.hexdigest()
-# print(final)
 
 f = Fernet(key)
 def main():
@@ -57,11 +49,36 @@ def login():
         read_password = (f.decrypt(compare_password)).decode()
         if check_password == read_password:
             print("You have succesfully signed in.")
+            inside_user(check_username)
         else:
-            print("incorrectpassword.")
+            print("Incorrect password.")
             login()
     else:
         print("No user under this username.")
         main()
+
+def inside_user(username):
+    print("************************")
+    print("Commands:")
+    print("+ = add new account")
+    print("************************")
+    action = input("What would you like to do? ")
+    if action == "+":
+        add_accounts(username)
+
+def add_accounts(username):
+    new_account = input("What is the account for? ")
+    new_username = input("What is the username for this account? ")
+    new_password = input("What is the password for this account? ")
+    password = new_password.encode()
+    read_password = f.encrypt(password)
+    file = open('{}.txt'.format(username), 'a')
+    file.write("\n" + new_account)
+    file.write("\n" + new_username + "\n")
+    file.close()
+    file_password = open('{}.txt'.format(username), 'ab')
+    file_password.write(read_password)
+    inside_user(username)
+
 
 main()
