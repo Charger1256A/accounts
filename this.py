@@ -25,6 +25,8 @@ def main():
     choice = input("Would you like to signup or login? ")
     if choice == "signup" or choice == "Signup" or choice == "s":
         signup()
+    else:
+        login()
 def signup():
     create_username = input("What would you like your username to be? ")
     create_password = input("What would you like your password to be? ")
@@ -38,15 +40,28 @@ def signup():
         login()
     else:
         file = open('{}.txt'.format(create_username), 'wb')
-        file.write(password)
+        file.write(read_password)
         file.close()
 
-
-        print("You have succesfully logged in!")
+        print("You're account has been created")
         login()
 
 
 def login():
-    pass
+    check_username = input("Enter Username: ")
+    check_password = input("Enter Password: ")
+
+    if os.path.isfile('{}.txt'.format(check_username)):
+        file = open('{}.txt'.format(check_username), 'rb')
+        compare_password = file.read()
+        read_password = (f.decrypt(compare_password)).decode()
+        if check_password == read_password:
+            print("You have succesfully signed in.")
+        else:
+            print("incorrectpassword.")
+            login()
+    else:
+        print("No user under this username.")
+        main()
 
 main()
