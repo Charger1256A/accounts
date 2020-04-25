@@ -1,6 +1,6 @@
 import os.path
 from cryptography.fernet import Fernet
-
+import linecache
 import os
 
 
@@ -58,14 +58,18 @@ def login():
         main()
 
 def inside_user(username):
-    # read_accounts(username)
-    print("************************")
+    read_accounts(username)
+    print("Newly created accounts won't display until you restart the program")
+    print("***********************************************************")
     print("Commands:")
     print("+ = add new account")
-    print("************************")
+    print("Enter number corresponding with account to view details.")
+    print("***********************************************************")
     action = input("What would you like to do? ")
     if action == "+":
         add_accounts(username)
+    elif type(int(action)) == int:
+        specific_accounts(username, action)
 
 def add_accounts(username):
     new_account = input("What is the account for? ")
@@ -83,14 +87,49 @@ def add_accounts(username):
     inside_user(username)
 
 def read_accounts(username):
+    arr = []
     file = open('{}.txt'.format(username), "r")
-    for i in range(10, 0, -1):
+    num = 0
+    for i in range(10000, 0, -1):
         j = i - 1
-        if j != 0 and j%3 == 0:
-            answer = j
-            accounts = file.readline(answer)
-            print(accounts)
+        if j != 0 and j % 3 == 0 and linecache.getline('{}.txt'.format(username), j) != "":
+            num += 1
+            accounts = j - 1
+            # arr.append(accounts)
+            read_accounts = linecache.getline('{}.txt'.format(username), accounts)
+            print(str(num) + ") " + read_accounts)
+    #
+    # sa = arr[int(account) - 1]
+    # su = sa + 1
+    # print()
 
 
+def specific_accounts(username, account):
+    arr = []
+    file = open('{}.txt'.format(username), "r")
+    for i in range(10000, 0, -1):
+        j = i - 1
+        if j != 0 and j % 3 == 0 and linecache.getline('{}.txt'.format(username), j) != "":
+            accounts = j - 1
+            arr.append(accounts)
+    sa = arr[int(account) - 1]
+    su = sa + 1
+    sp = sa + 2
+    spec_account = linecache.getline('{}.txt'.format(username), sa)
+    spec_username = linecache.getline('{}.txt'.format(username), su)
+
+
+    print("Account: " + spec_account)
+    print("    Username: " + spec_username)
+
+    file.close()
+    file_1 = open('{}.txt'.format(username), "rb")
+
+    spec_password = linecache.getline('{}.txt'.format(username), sp).encode()
+    # print(spec_password)
+    read_password = (f.decrypt(spec_password)).decode()
+    print("    Password: " + read_password)
+    file_1.close()
+    inside_user(username)
 
 main()
