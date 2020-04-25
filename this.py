@@ -48,7 +48,7 @@ def login():
         compare_password = file.read()
         read_password = (f.decrypt(compare_password)).decode()
         if check_password == read_password:
-            print("You have succesfully signed in.")
+            print(check_username + ", you have successfully signed in.")
             inside_user(check_username)
         else:
             print("Incorrect password.")
@@ -58,6 +58,7 @@ def login():
         main()
 
 def inside_user(username):
+    # read_accounts(username)
     print("************************")
     print("Commands:")
     print("+ = add new account")
@@ -73,12 +74,23 @@ def add_accounts(username):
     password = new_password.encode()
     read_password = f.encrypt(password)
     file = open('{}.txt'.format(username), 'a')
-    file.write("\n" + new_account)
-    file.write("\n" + new_username + "\n")
+    file.write("\n" + new_account + "\n")
+    file.write(new_username + "\n")
     file.close()
     file_password = open('{}.txt'.format(username), 'ab')
     file_password.write(read_password)
+    file_password.close()
     inside_user(username)
+
+def read_accounts(username):
+    file = open('{}.txt'.format(username), "r")
+    for i in range(10, 0, -1):
+        j = i - 1
+        if j != 0 and j%3 == 0:
+            answer = j
+            accounts = file.readline(answer)
+            print(accounts)
+
 
 
 main()
